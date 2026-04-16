@@ -1,11 +1,15 @@
 import { Request, Response } from "express";
+import { registerUser } from "../services/userService";
+import { registerUserSchema } from "../schemas/userSchema";
 
 export const register = (req: Request, res: Response) => {
-  const { nome, email, senha } = req.body;
+  const parsed = registerUserSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({
+      error: parsed.error.issues,
+    });
+  }
+  const user = registerUser(parsed.data);
 
-  console.log(nome, email, senha);
-
-  return res.status(201).json({
-    message: "Usuário registrado (simulação)",
-  });
+  return res.status(201).json(user);
 };
