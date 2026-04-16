@@ -1,21 +1,46 @@
-import { RegisterUserDTO } from "../schemas/userSchema";
+import { RegisterUserDTO, loginUserDTO } from "../schemas/userSchema";
 import { UserResponse } from "../types/user";
 import bcrypt from "bcrypt";
+
+let fakeUser: any = null;
 
 export const registerUser = async (
   data: RegisterUserDTO,
 ): Promise<UserResponse> => {
+  const { nome, email, senha } = data;
 
-    const { nome, email, senha} = data
+  const senhaHash = await bcrypt.hash(senha, 10);
 
-    const senhaHash = await bcrypt.hash(senha,10)
-
-    console.log("Senha original:", senha)
-    console.log("Senha Hash:", senhaHash)
-
-    return {
+  fakeUser = {
     id: 1,
-    nome: data.nome,
-    email: data.email,
+    nome,
+    email,
+    senha: senhaHash,
+  };
+
+  return {
+    id: 1,
+    nome,
+    email,
+  };
+};
+
+export const loginUser = async (data: loginUserDTO) => {
+  const { email, senha } = data;
+
+  if (!fakeUser || email !== fakeUser.email) {
+    throw new Error("Credenciais inválidas");
+  }
+
+  const senhaValida = await bcrypt.compare(senha, fakeUser.senha);
+
+  if (!senhaValida) {
+    throw new Error("Credenciais inválidas");
+  }
+
+  return {
+    id: fakeUser.id,
+    nome: fakeUser.nome,
+    email: fakeUser.email,
   };
 };
