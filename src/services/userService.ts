@@ -1,9 +1,7 @@
-import { RegisterUserDTO, UserResponse } from "../types/user";
-import { registerUserSchema } from "../schemas/userSchema";
+import { RegisterUserDTO } from "../schemas/userSchema";
+import { UserResponse } from "../types/user";
 
 export const registerUser = (data: RegisterUserDTO): UserResponse => {
-  const { nome, email } = data;
-
   return {
     id: 1,
     nome: data.nome,
