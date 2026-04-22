@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 
 const SECRET = process.env.JWT_SECRET!;
 
-if(!SECRET){
-    throw new Error("JWT_SECRET não definido")
+if (!SECRET) {
+  throw new Error("JWT_SECRET não definido");
 }
 
 export function authMiddleware(
@@ -27,8 +27,8 @@ export function authMiddleware(
   const token = parts[1]!;
 
   try {
-    const decoded = jwt.verify(token, SECRET);
-    (req as any).user = decoded;
+    const decoded = jwt.verify(token, SECRET) as { id: string };
+    req.user = decoded;
     next();
   } catch {
     return res.status(401).json({ message: "Token inválido" });

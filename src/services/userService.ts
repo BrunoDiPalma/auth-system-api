@@ -1,49 +1,62 @@
-import { RegisterUserDTO, loginUserDTO } from "../schemas/userSchema";
-import { UserResponse } from "../types/user";
+import { prisma } from "../prisma";
+import { loginUserDTO, RegisterUserDTO } from "../schemas/userSchema";
 import bcrypt from "bcrypt";
+import { UserResponse } from "../types/user";
 import { generateToken } from "../utils/generateToken";
-
-let fakeUser: any = null;
 
 export const registerUser = async (
   data: RegisterUserDTO,
 ): Promise<UserResponse> => {
   const { nome, email, senha } = data;
+
+  const userExists = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (userExists) {
+    throw new Error("Este e-mail já está em uso");
+  }
+
   const senhaHash = await bcrypt.hash(senha, 10);
 
-  fakeUser = {
-    id: 1,
-    nome,
-    email,
-    senha: senhaHash,
-  };
+  const user = await prisma.user.create({
+    data: {
+      nome,
+      email,
+      senha: senhaHash,
+    },
+  });
+
   return {
-    id: 1,
-    nome,
-    email,
+    id: user.id,
+    nome: user.nome,
+    email: user.email,
   };
 };
 
 export const loginUser = async (data: loginUserDTO) => {
   const { email, senha } = data;
 
-  if (!fakeUser || email != fakeUser.email) {
-    throw new Error("Credenciais inválidas");
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+  if (!user) {
+    throw new Error("E-mail ou senha inválidos!");
   }
 
-  const senhaValida = await bcrypt.compare(senha, fakeUser.senha);
+  const senhaValida = await bcrypt.compare(senha, user.senha);
 
   if (!senhaValida) {
-    throw new Error("Credenciais inválidas");
+    throw new Error("E-mail ou senha inválidos!");
   }
 
-  const token = generateToken(fakeUser.id.toString());
+  const token = generateToken(user.id);
 
   return {
     user: {
-      id: fakeUser.id,
-      nome: fakeUser.nome,
-      email: fakeUser.email,
+      id: user.id,
+      nome: user.nome,
+      email: user.email,
     },
     token,
   };
