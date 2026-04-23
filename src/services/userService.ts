@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import { UserResponse } from "../types/user";
 import { generateToken } from "../utils/generateToken";
 
-export const registerUser = async (
+export const registerUserService = async (
   data: RegisterUserDTO,
 ): Promise<UserResponse> => {
   const { nome, email, senha } = data;
@@ -34,7 +34,7 @@ export const registerUser = async (
   };
 };
 
-export const loginUser = async (data: loginUserDTO) => {
+export const loginUserService = async (data: loginUserDTO) => {
   const { email, senha } = data;
 
   const user = await prisma.user.findUnique({
@@ -60,4 +60,109 @@ export const loginUser = async (data: loginUserDTO) => {
     },
     token,
   };
+};
+
+export const getMeService = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new Error("Usuário não encontrado");
+  }
+
+  return {
+    id: user.id,
+    nome: user.nome,
+    email: user.email,
+  };
+};
+
+export const getUserService = async () => {
+  const users = await prisma.user.findMany();
+
+  return users.map((user) => ({
+    id: user.id,
+    nome: user.nome,
+    email: user.email,
+  }));
+};
+
+export const getUserbyIdService = async (id: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
+
+  if (!user) {
+    throw new Error("Usuário não encontrado!");
+  }
+  return {
+    id: user.id,
+    nome: user.nome,
+    email: user.email,
+  };
+};
+
+export const updateUserService = async (
+  id: string,
+  data: {
+    nome?: string | undefined;
+    email?: string | undefined;
+    senha?: string | undefined;
+  },
+) => {
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
+
+  if (!user) {
+    throw new Error("Usuário não encontrado!");
+  }
+
+  if (data.email && data.email !== user.email) {
+    const emailExists = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (emailExists) {
+      throw new Error("Este e-mail já está em uso!");
+    }
+  }
+
+  let senhaHash;
+
+  if (data.senha) {
+    senhaHash = await bcrypt.hash(data.senha, 10);
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id },
+    data: {
+      ...(data.nome && { nome: data.nome }),
+      ...(data.email && { email: data.email }),
+      ...(senhaHash && { senha: senhaHash }),
+    },
+  });
+
+  return {
+    id: updatedUser.id,
+    nome: updatedUser.nome,
+    email: updatedUser.email,
+  };
+};
+
+export const deleteUserService = async (id: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
+
+  if (!user) {
+    throw new Error("Usuário não encontrado");
+  }
+
+  await prisma.user.delete({
+    where: { id },
+  });
+
+  return { message: "Usuário deletado com sucesso!" };
 };

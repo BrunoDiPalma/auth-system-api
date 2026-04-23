@@ -14,3 +14,9 @@ export const loginUserSchema = z.object({
 });
 
 export type loginUserDTO = z.infer<typeof loginUserSchema>;
+
+export const updateUserSchema = z.object({
+  nome: z.string().min(2).optional(),
+  email: z.email().optional(),
+  senha: z.string().min(6).optional(),
+});
