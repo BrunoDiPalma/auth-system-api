@@ -1,9 +1,11 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const navigate = useNavigate()
 
   const { login } = useContext(AuthContext);
 
@@ -12,6 +14,7 @@ export default function Login() {
 
     try {
       await login(email.trim(), senha.trim());
+      navigate("/dashboard")
       alert("Login realizado com sucesso!");
     } catch {
       alert("E-mail ou senha inválidos");
