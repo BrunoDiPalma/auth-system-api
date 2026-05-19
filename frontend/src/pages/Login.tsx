@@ -1,11 +1,12 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const { login } = useContext(AuthContext);
 
@@ -14,7 +15,7 @@ export default function Login() {
 
     try {
       await login(email.trim(), senha.trim());
-      navigate("/dashboard")
+      navigate("/dashboard");
       alert("Login realizado com sucesso!");
     } catch {
       alert("E-mail ou senha inválidos");
@@ -47,10 +48,17 @@ export default function Login() {
 
         <button
           type="submit"
-          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 cursor-pointer"
         >
           Entrar
         </button>
+
+        <p>
+          Não possui cadastro?{" "}
+          <Link to="/register" className="text-blue-500 hover:underline">
+            Crie sua conta
+          </Link>
+        </p>
       </form>
     </div>
   );

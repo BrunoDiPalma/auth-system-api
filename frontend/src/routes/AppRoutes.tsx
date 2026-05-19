@@ -1,25 +1,27 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Login from "../pages/Login";
+import Register from "../pages/Register";
 import { Dashboard } from "../pages/Dashboard";
 import { PrivateRoute } from "./PrivateRoute";
 import { Navigate } from "react-router-dom";
 
 export function AppRoutes() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<Login />} />
+    <Routes>
+      <Route path="/" element={<Navigate to="/register" />} />
 
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+      <Route path="/register" element={<Register />} />
+
+      <Route path="/login" element={<Login />} />
+
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        }
+      />
+    </Routes>
   );
 }

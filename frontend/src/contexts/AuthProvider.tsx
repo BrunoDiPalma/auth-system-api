@@ -24,6 +24,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     api.defaults.headers.common["Authorization"] = `Bearer ${responseToken}`;
   }
 
+  async function register(nome: string, email: string, senha: string) {
+    await api.post("/register", { nome, email, senha });
+  }
+
   function logout() {
     setToken(null);
     localStorage.removeItem("authToken");
@@ -34,7 +38,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isAuthenticated = !!token;
 
   return (
-    <AuthContext.Provider value={{ token, login, logout, isAuthenticated }}>
+    <AuthContext.Provider
+      value={{ token, login, logout, isAuthenticated, register }}
+    >
       {children}
     </AuthContext.Provider>
   );
