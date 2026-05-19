@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
+import { AxiosError } from "axios";
 
 export default function Register() {
   const [nome, setNome] = useState("");
@@ -20,9 +21,10 @@ export default function Register() {
       await register(nome.trim(), email.trim(), senha.trim());
 
       navigate("/login");
-    } catch (error) {
-      setErro("Erro ao criar conta");
-      console.error(error);
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
+
+      setErro(err.response?.data?.message || "Erro ao criar conta");
     }
   }
 

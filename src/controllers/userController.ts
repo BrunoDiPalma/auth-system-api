@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { loginUserSchema, registerUserSchema, updateUserSchema } from "../schemas/userSchema";
+import {
+  loginUserSchema,
+  registerUserSchema,
+  updateUserSchema,
+} from "../schemas/userSchema";
 import {
   getMeService,
   loginUserService,
@@ -7,13 +11,15 @@ import {
   getUserService,
   getUserbyIdService,
   updateUserService,
-  deleteUserService
+  deleteUserService,
 } from "../services/userService";
 
 export const register = async (req: Request, res: Response) => {
   const parsed = registerUserSchema.safeParse(req.body);
   if (!parsed.success) {
-    return res.status(400).json(parsed.error.issues);
+    return res.status(400).json({
+      message: parsed.error.issues[0]?.message,
+    });
   }
 
   const user = await registerUserService(parsed.data);
@@ -85,46 +91,46 @@ export const getUserbyId = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
 
-    if(!id || typeof id !== "string"){
+    if (!id || typeof id !== "string") {
       return res.status(400).json({
-        message: "ID inválido!"
-      })
+        message: "ID inválido!",
+      });
     }
 
-    const parsed = updateUserSchema.safeParse(req.body)
+    const parsed = updateUserSchema.safeParse(req.body);
 
-    if(!parsed.success){
-      return res.status(400).json(parsed.error.issues)
+    if (!parsed.success) {
+      return res.status(400).json(parsed.error.issues);
     }
 
-    const updatedUser = await updateUserService(id, parsed.data)
+    const updatedUser = await updateUserService(id, parsed.data);
 
-    return res.json(updatedUser)
+    return res.json(updatedUser);
   } catch (error) {
     return res.status(400).json({
-      message: "Erro ao atualizar usuário"
-    })
+      message: "Erro ao atualizar usuário",
+    });
   }
-}
+};
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
 
-    if(!id || typeof id !== "string"){
+    if (!id || typeof id !== "string") {
       return res.status(400).json({
-        message: "ID inválido"
-      })
+        message: "ID inválido",
+      });
     }
 
-    const result = await deleteUserService(id)
+    const result = await deleteUserService(id);
 
-    return res.json(result)
+    return res.json(result);
   } catch (error) {
     return res.status(404).json({
-      message: "Erro ao excluir usuário"
-    })
+      message: "Erro ao excluir usuário",
+    });
   }
-}
+};

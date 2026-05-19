@@ -3,6 +3,7 @@ import { loginUserDTO, RegisterUserDTO } from "../schemas/userSchema";
 import bcrypt from "bcrypt";
 import { UserResponse } from "../types/user";
 import { generateToken } from "../utils/generateToken";
+import { AppError } from "../errors/AppError";
 
 export const registerUserService = async (
   data: RegisterUserDTO,
@@ -14,7 +15,7 @@ export const registerUserService = async (
   });
 
   if (userExists) {
-    throw new Error("Este e-mail já está em uso");
+    throw new AppError("Este e-mail já está em uso", 409);
   }
 
   const senhaHash = await bcrypt.hash(senha, 10);
@@ -41,13 +42,13 @@ export const loginUserService = async (data: loginUserDTO) => {
     where: { email },
   });
   if (!user) {
-    throw new Error("E-mail ou senha inválidos!");
+    throw new AppError("E-mail ou senha inválidos!", 401);
   }
 
   const senhaValida = await bcrypt.compare(senha, user.senha);
 
   if (!senhaValida) {
-    throw new Error("E-mail ou senha inválidos!");
+    throw new AppError("E-mail ou senha inválidos!", 401);
   }
 
   const token = generateToken(user.id);
@@ -68,7 +69,7 @@ export const getMeService = async (userId: string) => {
   });
 
   if (!user) {
-    throw new Error("Usuário não encontrado");
+    throw new AppError("Usuário não encontrado", 404);
   }
 
   return {
@@ -94,7 +95,7 @@ export const getUserbyIdService = async (id: string) => {
   });
 
   if (!user) {
-    throw new Error("Usuário não encontrado!");
+    throw new AppError("Usuário não encontrado!", 404);
   }
   return {
     id: user.id,
@@ -116,7 +117,7 @@ export const updateUserService = async (
   });
 
   if (!user) {
-    throw new Error("Usuário não encontrado!");
+    throw new AppError("Usuário não encontrado!", 404);
   }
 
   if (data.email && data.email !== user.email) {
@@ -125,7 +126,7 @@ export const updateUserService = async (
     });
 
     if (emailExists) {
-      throw new Error("Este e-mail já está em uso!");
+      throw new AppError("Este e-mail já está em uso!", 409);
     }
   }
 
@@ -157,7 +158,7 @@ export const deleteUserService = async (id: string) => {
   });
 
   if (!user) {
-    throw new Error("Usuário não encontrado");
+    throw new AppError("Usuário não encontrado", 404);
   }
 
   await prisma.user.delete({
