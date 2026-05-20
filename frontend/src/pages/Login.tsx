@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
   const navigate = useNavigate();
 
   const { login } = useContext(AuthContext);
@@ -39,12 +40,20 @@ export default function Login() {
         />
 
         <input
-          type="password"
-          placeholder="Senha"
+          type={mostrarSenha ? "text" : "password"}
+          placeholder="Digita sua senha"
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
           className="border p-2 rounded"
         />
+
+        <button
+          type="button"
+          onClick={() => setMostrarSenha(!mostrarSenha)}
+          className="text-sm text-blue-500 cursor-pointer"
+        >
+          {mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+        </button>
 
         <button
           type="submit"

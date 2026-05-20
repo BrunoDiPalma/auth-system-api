@@ -8,7 +8,10 @@ export default function Register() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
   const [erro, setErro] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [mostrarSenha, setMostrarSenha] = useState(false);
 
   const navigate = useNavigate();
 
@@ -17,7 +20,14 @@ export default function Register() {
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
 
+    if (senha !== confirmarSenha) {
+      setErro("As senhas não coincidem");
+      return;
+    }
+
     try {
+      setLoading(true);
+
       await register(nome.trim(), email.trim(), senha.trim());
 
       navigate("/login");
@@ -25,6 +35,8 @@ export default function Register() {
       const err = error as AxiosError<{ message: string }>;
 
       setErro(err.response?.data?.message || "Erro ao criar conta");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -40,7 +52,10 @@ export default function Register() {
           type="nome"
           placeholder="Digite seu nome"
           value={nome}
-          onChange={(e) => setNome(e.target.value)}
+          onChange={(e) => {
+            setNome(e.target.value);
+            setErro("");
+          }}
           className="border p-2 rounded"
         />
 
@@ -48,15 +63,40 @@ export default function Register() {
           type="email"
           placeholder="Digite seu e-mail"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setErro("");
+          }}
           className="border p-2 rounded"
         />
 
         <input
-          type="password"
+          type={mostrarSenha ? "text" : "password"}
           placeholder="Digita sua senha"
           value={senha}
-          onChange={(e) => setSenha(e.target.value)}
+          onChange={(e) => {
+            setSenha(e.target.value);
+            setErro("");
+          }}
+          className="border p-2 rounded"
+        />
+
+        <button
+          type="button"
+          onClick={() => setMostrarSenha(!mostrarSenha)}
+          className="text-sm text-blue-500 cursor-pointer"
+        >
+          {mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+        </button>
+
+        <input
+          type="password"
+          placeholder="Confirme sua senha"
+          value={confirmarSenha}
+          onChange={(e) => {
+            setConfirmarSenha(e.target.value);
+            setErro("");
+          }}
           className="border p-2 rounded"
         />
 
@@ -68,9 +108,10 @@ export default function Register() {
 
         <button
           type="submit"
+          disabled={loading}
           className="bg-green-500 text-white p-2 rounded hover:bg-green-600 cursor-pointer"
         >
-          Registrar
+          {loading ? "Criando conta..." : "Registrar"}
         </button>
 
         <p className="text-sm text-center">
