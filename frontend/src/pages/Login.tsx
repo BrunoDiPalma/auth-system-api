@@ -1,14 +1,16 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useRef } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import toast from "react-hot-toast"
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const navigate = useNavigate();
+
+  const loginRef = useRef<HTMLInputElement>(null);
 
   const { login } = useContext(AuthContext);
 
@@ -18,9 +20,12 @@ export default function Login() {
     try {
       await login(email.trim(), senha.trim());
       navigate("/dashboard");
-      toast.success("Login realizado com sucesso!")
+      toast.success("Login realizado com sucesso!");
     } catch {
-      toast.error("E-mail ou senha inválidos!")
+      toast.error("E-mail ou senha inválidos!");
+      setTimeout(() => {
+        loginRef.current?.focus();
+      }, 0);
     }
   }
 
@@ -35,9 +40,11 @@ export default function Login() {
         <input
           type="email"
           autoComplete="email"
+          ref={loginRef}
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onBlur={() => setEmail(email.trim())}
           className="border p-2 rounded"
         />
 

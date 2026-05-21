@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
@@ -14,6 +14,11 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
+  const nomeRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const senhaRef = useRef<HTMLInputElement>(null);
+  const confirmarSenhaRef = useRef<HTMLInputElement>(null);
+
   const navigate = useNavigate();
 
   const { register } = useContext(AuthContext);
@@ -27,6 +32,8 @@ export default function Register() {
       setErro(mensagem);
 
       toast.error(mensagem);
+
+      confirmarSenhaRef.current?.focus();
 
       return;
     }
@@ -49,6 +56,18 @@ export default function Register() {
       setErro(mensagem);
 
       toast.error(mensagem);
+
+      if (mensagem.includes("Nome")) {
+        nomeRef.current?.focus();
+      }
+
+      if (mensagem.includes("e-mail")) {
+        emailRef.current?.focus();
+      }
+
+      if (mensagem.includes("Senha")) {
+        senhaRef.current?.focus();
+      }
     } finally {
       setLoading(false);
     }
@@ -63,32 +82,37 @@ export default function Register() {
         <h1 className="text-xl font-bold text-center">Criar conta</h1>
 
         <input
-          type="nome"
+          type="text"
           autoComplete="name"
+          ref={nomeRef}
           placeholder="Digite seu nome"
           value={nome}
           onChange={(e) => {
             setNome(e.target.value);
             setErro("");
           }}
+          onBlur={() => setNome(nome.trim())}
           className="border p-2 rounded"
         />
 
         <input
           type="email"
           autoComplete="email"
+          ref={emailRef}
           placeholder="Digite seu e-mail"
           value={email}
           onChange={(e) => {
             setEmail(e.target.value);
             setErro("");
           }}
+          onBlur={() => setEmail(email.trim())}
           className="border p-2 rounded"
         />
 
         <input
           type={mostrarSenha ? "text" : "password"}
           autoComplete="new-password"
+          ref={senhaRef}
           placeholder="Digita sua senha"
           value={senha}
           onChange={(e) => {
@@ -119,6 +143,7 @@ export default function Register() {
         <input
           type="password"
           autoComplete="new-password"
+          ref={confirmarSenhaRef}
           placeholder="Confirme sua senha"
           value={confirmarSenha}
           onChange={(e) => {
