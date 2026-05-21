@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { AxiosError } from "axios";
+import toast from "react-hot-toast";
 
 export default function Register() {
   const [nome, setNome] = useState("");
@@ -21,7 +22,12 @@ export default function Register() {
     e.preventDefault();
 
     if (senha !== confirmarSenha) {
-      setErro("As senhas não coincidem");
+      const mensagem = "As senhas não coincidem!";
+
+      setErro(mensagem);
+
+      toast.error(mensagem);
+
       return;
     }
 
@@ -30,11 +36,19 @@ export default function Register() {
 
       await register(nome.trim(), email.trim(), senha.trim());
 
+      setErro("");
+
+      toast.success("Conta criada com sucesso!");
+
       navigate("/login");
     } catch (error: unknown) {
       const err = error as AxiosError<{ message: string }>;
 
-      setErro(err.response?.data?.message || "Erro ao criar conta");
+      const mensagem = err.response?.data?.message || "Erro ao criar conta";
+
+      setErro(mensagem);
+
+      toast.error(mensagem);
     } finally {
       setLoading(false);
     }
@@ -50,6 +64,7 @@ export default function Register() {
 
         <input
           type="nome"
+          autoComplete="name"
           placeholder="Digite seu nome"
           value={nome}
           onChange={(e) => {
@@ -61,6 +76,7 @@ export default function Register() {
 
         <input
           type="email"
+          autoComplete="email"
           placeholder="Digite seu e-mail"
           value={email}
           onChange={(e) => {
@@ -72,11 +88,17 @@ export default function Register() {
 
         <input
           type={mostrarSenha ? "text" : "password"}
+          autoComplete="new-password"
           placeholder="Digita sua senha"
           value={senha}
           onChange={(e) => {
             setSenha(e.target.value);
             setErro("");
+          }}
+          onCopy={(e) => {
+            if (!mostrarSenha) {
+              e.preventDefault();
+            }
           }}
           className="border p-2 rounded"
         />
@@ -84,6 +106,11 @@ export default function Register() {
         <button
           type="button"
           onClick={() => setMostrarSenha(!mostrarSenha)}
+          onCopy={(e) => {
+            if (!mostrarSenha) {
+              e.preventDefault();
+            }
+          }}
           className="text-sm text-blue-500 cursor-pointer"
         >
           {mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
@@ -91,6 +118,7 @@ export default function Register() {
 
         <input
           type="password"
+          autoComplete="new-password"
           placeholder="Confirme sua senha"
           value={confirmarSenha}
           onChange={(e) => {

@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast"
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,9 +18,9 @@ export default function Login() {
     try {
       await login(email.trim(), senha.trim());
       navigate("/dashboard");
-      alert("Login realizado com sucesso!");
+      toast.success("Login realizado com sucesso!")
     } catch {
-      alert("E-mail ou senha inválidos");
+      toast.error("E-mail ou senha inválidos!")
     }
   }
 
@@ -33,6 +34,7 @@ export default function Login() {
 
         <input
           type="email"
+          autoComplete="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -41,6 +43,7 @@ export default function Login() {
 
         <input
           type={mostrarSenha ? "text" : "password"}
+          autoComplete="current-password"
           placeholder="Digita sua senha"
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
