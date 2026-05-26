@@ -19,4 +19,17 @@ model User {
   updatedAt DateTime @updatedAt
   
   role      String   @default("USER")
+
+  todos     Todo[]
+}
+
+model Todo {
+  id        String @id @default(uuid())
+  titulo    String
+  concluida Boolean @default(false)
+
+  userId    String
+  user      User@relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
 }
