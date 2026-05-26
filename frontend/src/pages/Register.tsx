@@ -61,7 +61,7 @@ export default function Register() {
         nomeRef.current?.focus();
       }
 
-      if (mensagem.includes("e-mail")) {
+      if (mensagem.includes("E-mail")) {
         emailRef.current?.focus();
       }
 

@@ -1,16 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import { api } from "../api/api";
+import type { User } from "./AuthContext";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(() => {
     return localStorage.getItem("authToken");
   });
 
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    if (token) {
+    async function getMe() {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      const response = await api.get("/me");
+      setUser(response.data);
+
+      setLoading(false);
     }
+
+    getMe();
   }, [token]);
 
   async function login(email: string, senha: string) {
@@ -35,11 +51,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     delete api.defaults.headers.common["Authorization"];
   }
 
-  const isAuthenticated = !!token;
+  const isAuthenticated = !!token && !!user;
 
   return (
     <AuthContext.Provider
-      value={{ token, login, logout, isAuthenticated, register }}
+      value={{ token, user, login, logout, isAuthenticated, register, loading }}
     >
       {children}
     </AuthContext.Provider>

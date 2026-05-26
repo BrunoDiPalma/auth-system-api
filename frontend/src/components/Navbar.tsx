@@ -3,7 +3,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export function Navbar() {
-  const { logout, isAuthenticated } = useContext(AuthContext);
+  const { logout, isAuthenticated, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   function handleLogout() {
@@ -11,6 +11,7 @@ export function Navbar() {
     navigate("/login");
   }
 
+  if (loading) return null;
   if (!isAuthenticated) return null;
 
   return (
