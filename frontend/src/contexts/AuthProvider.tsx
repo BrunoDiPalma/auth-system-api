@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      const response = await api.get("/me");
+      const response = await api.get("/users/me");
       setUser(response.data);
 
       setLoading(false);
@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [token]);
 
   async function login(email: string, senha: string) {
-    const response = await api.post("/login", { email, senha });
+    const response = await api.post("/users/login", { email, senha });
 
     const responseToken = response.data.token;
 
@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function register(nome: string, email: string, senha: string) {
-    await api.post("/register", { nome, email, senha });
+    await api.post("/users/register", { nome, email, senha });
   }
 
   function logout() {

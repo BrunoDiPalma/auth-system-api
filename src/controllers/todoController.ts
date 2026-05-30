@@ -13,3 +13,13 @@ export async function createTodo(req: Request, res: Response) {
 
   return res.status(201).json(todo);
 }
+
+export async function getTodos(req: Request, res: Response) {
+  const todos = await prisma.todo.findMany({
+    where: {
+      userId: req.user!.id,
+    },
+  });
+
+  return res.json(todos)
+}
