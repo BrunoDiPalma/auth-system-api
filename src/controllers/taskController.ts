@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import { prisma } from "../prisma";
-import { Tasks } from "../types/task";
+import { createTaskSchema, updateTaskSchema } from "../schemas/taskSchema";
 
 export async function createTasks(req: Request, res: Response) {
-  const { titulo } = req.body;
+  const taskData = createTaskSchema.parse(req.body);
 
   const task = await prisma.todo.create({
     data: {
-      titulo,
+      titulo: taskData.titulo,
+      concluida: taskData.concluida ?? false,
       userId: req.user.id,
     },
   });
@@ -29,47 +30,47 @@ export async function updateTasks(req: Request, res: Response) {
   const { id } = req.params;
 
   if (!id || typeof id !== "string") {
-    return res.status(400).json({
-      message: "ID inválido!",
-    });
+    return res.status(400).json({ message: "ID inválido!" });
   }
 
-  const { titulo, concluida } = req.body;
+  const taskData = updateTaskSchema.parse(req.body);
 
-  const task = await prisma.todo.findUnique({
-    where: { id },
+  const task = await prisma.todo.findFirst({
+    where: { id,
+      userId: req.user.id
+     },
   });
 
   if (!task) {
     return res.status(404).json({ message: "Tarefa não encontrada!" });
   }
 
-  const updateTask = await prisma.todo.update({
+  const updatedTask = await prisma.todo.update({
     where: { id },
     data: {
-      titulo: titulo ?? task.titulo,
-      concluida: concluida ?? task.concluida,
+      titulo: taskData.titulo ?? task.titulo,
+      concluida: taskData.concluida ?? task.concluida,
     },
   });
 
-  return res.json(updateTask);
+  return res.json(updatedTask);
 }
 
 export async function deleteTask(req: Request, res: Response) {
   const { id } = req.params;
 
   if (!id || typeof id !== "string") {
-    return res.status(400).json({
-      message: "ID inválido!",
-    });
+    return res.status(400).json({ message: "ID inválido!" });
   }
 
-  const task = await prisma.todo.findUnique({
-    where: { id },
+  const task = await prisma.todo.findFirst({
+    where: { id,
+      userId: req.user.id
+     },
   });
 
-  if(!task){
-    return res.status(404).json({ message: "Tarefa não encontrada!"})
+  if (!task) {
+    return res.status(404).json({ message: "Tarefa não encontrada!" });
   }
 
   await prisma.todo.delete({
