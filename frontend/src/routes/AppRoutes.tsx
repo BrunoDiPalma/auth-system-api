@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { useContext } from "react";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import { Dashboard } from "../pages/Dashboard";
+import Dashboard from "../pages/Dashboard";
 import { PrivateRoute } from "./PrivateRoute";
 import { PublicRoute } from "./PublicRoute";
 import { AuthContext } from "../contexts/AuthContext";
