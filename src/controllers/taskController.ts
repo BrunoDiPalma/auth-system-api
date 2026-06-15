@@ -5,6 +5,17 @@ import { createTaskSchema, updateTaskSchema } from "../schemas/taskSchema";
 export async function createTasks(req: Request, res: Response) {
   const taskData = createTaskSchema.parse(req.body);
 
+  const existingTask = await prisma.todo.findFirst({
+    where: {
+      titulo: taskData.titulo,
+      userId: req.user.id
+    }
+  })
+
+  if(existingTask){
+    return res.status(400).json({ message: "Você já adicionou essa tarefa"})
+  }
+
   const task = await prisma.todo.create({
     data: {
       titulo: taskData.titulo,

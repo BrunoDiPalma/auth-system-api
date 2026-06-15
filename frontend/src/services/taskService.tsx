@@ -1,7 +1,8 @@
 import { api } from "../api/api";
+import type { Task } from "../types/task";
 
-export const getTask = async () => {
-    const response = await api.get("/tasks")
+export const getTasks = async (): Promise<Task[]> => {
+  const response = await api.get("/tasks");
 
-    return response.data
-}
+  return response.data;
+};
