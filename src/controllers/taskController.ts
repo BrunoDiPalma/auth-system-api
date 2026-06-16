@@ -8,12 +8,12 @@ export async function createTasks(req: Request, res: Response) {
   const existingTask = await prisma.todo.findFirst({
     where: {
       titulo: taskData.titulo,
-      userId: req.user.id
-    }
-  })
+      userId: req.user.id,
+    },
+  });
 
-  if(existingTask){
-    return res.status(400).json({ message: "Você já adicionou essa tarefa"})
+  if (existingTask) {
+    return res.status(400).json({ message: "Você já adicionou essa tarefa" });
   }
 
   const task = await prisma.todo.create({
@@ -47,13 +47,29 @@ export async function updateTasks(req: Request, res: Response) {
   const taskData = updateTaskSchema.parse(req.body);
 
   const task = await prisma.todo.findFirst({
-    where: { id,
-      userId: req.user.id
-     },
+    where: { id, userId: req.user.id },
   });
 
   if (!task) {
     return res.status(404).json({ message: "Tarefa não encontrada!" });
+  }
+
+  const tituloFinal = taskData.titulo ?? task.titulo;
+
+  const existingTask = await prisma.todo.findFirst({
+    where: {
+      titulo: tituloFinal,
+      userId: req.user.id,
+      NOT: {
+        id,
+      },
+    },
+  });
+
+  if (existingTask) {
+    return res
+      .status(400)
+      .json({ message: "Você já possui uma tarefa com este título!" });
   }
 
   const updatedTask = await prisma.todo.update({
@@ -75,9 +91,7 @@ export async function deleteTask(req: Request, res: Response) {
   }
 
   const task = await prisma.todo.findFirst({
-    where: { id,
-      userId: req.user.id
-     },
+    where: { id, userId: req.user.id },
   });
 
   if (!task) {

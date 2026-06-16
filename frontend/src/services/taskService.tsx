@@ -6,3 +6,23 @@ export const getTasks = async (): Promise<Task[]> => {
 
   return response.data;
 };
+
+export const createTask = async (titulo: string) => {
+  const response = await api.post("/tasks", {
+    titulo,
+  });
+
+  return response.data;
+};
+
+export const deleteTask = async (id: string): Promise<void> => {
+  await api.delete(`/tasks/${id}`);
+};
+
+export const updateTask = async (id: string, titulo: string): Promise<Task> => {
+  const response = await api.put(`/tasks/${id}`, {
+    titulo,
+  });
+
+  return response.data;
+};
