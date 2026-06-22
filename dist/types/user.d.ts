@@ -1,6 +1,0 @@
-export type UserResponse = {
-    id: string;
-    nome: string;
-    email: string;
-};
-//# sourceMappingURL=user.d.ts.map
