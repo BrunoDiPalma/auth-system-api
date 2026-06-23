@@ -11,6 +11,11 @@ Sistema fullstack de autenticação e gerenciamento de tarefas, com login, regis
 
 ---
 
+## 📷 Preview do projeto
+
+<img width="1600" height="759" alt="64270fd2-4d93-407f-87d5-3ca17ae745af" src="https://github.com/user-attachments/assets/21210ea5-b2a6-4b17-958d-ca500ddf2e39" />
+
+
 ## 🧠 Funcionalidades
 
 ### 🔐 Autenticação
