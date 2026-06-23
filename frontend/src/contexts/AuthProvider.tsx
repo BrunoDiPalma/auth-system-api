@@ -14,16 +14,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function getMe() {
       if (!token) {
+        setUser(null);
         setLoading(false);
         return;
       }
 
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      try {
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      const response = await api.get("/users/me");
-      setUser(response.data);
+        const response = await api.get("/users/me");
+        setUser(response.data);
+      } catch (error) {
+        console.log("Erro ao buscar usuário:", error);
 
-      setLoading(false);
+        setUser(null);
+        setToken(null);
+        localStorage.removeItem("authToken");
+        delete api.defaults.headers.common["Authorization"];
+      } finally {
+        setLoading(false);
+      }
     }
 
     getMe();
