@@ -11,7 +11,7 @@ import { RootRedirect } from "../components/Redirect";
 export function AppRoutes() {
   const { loading } = useContext(AuthContext);
 
-  if (loading) return null;
+  if (loading) return <div>Carregando...</div>;
 
   return (
     <Routes>
@@ -25,6 +25,7 @@ export function AppRoutes() {
           </PublicRoute>
         }
       />
+
       <Route
         path="/login"
         element={

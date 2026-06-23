@@ -6,12 +6,12 @@ export function PublicRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, loading } = useContext(AuthContext);
 
   if (loading) {
-    return null;
+    return <div>Carregando...</div>;
   }
 
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" />;
-  }
-
-  return children;
+  return isAuthenticated ? (
+    <Navigate to="/dashboard" replace />
+  ) : (
+    children
+  );
 }
