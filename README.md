@@ -1,13 +1,13 @@
-# 📌 Auth System API + Frontend
+# 📌 Auth System API + Front-end
 
-Sistema fullstack de autenticação e gerenciamento de tarefas, com login, registro e CRUD de tarefas por usuário.
+Sistema full stack de autenticação e gerenciamento de tarefas, com login, registro e CRUD de tarefas por usuário.
 
 ---
 
 ## 🚀 Deploy
 
-- 🔵 Frontend: https://auth-system-api-one.vercel.app
-- 🟢 Backend: https://auth-system-api-l3wc.onrender.com  
+- 🔵 Front-end: https://auth-system-api-one.vercel.app
+- 🟢 Back-end: https://auth-system-api-l3wc.onrender.com  
 
 ---
 
@@ -38,7 +38,7 @@ Sistema fullstack de autenticação e gerenciamento de tarefas, com login, regis
 
 ## 🛠️ Tecnologias
 
-### ⚙️ Backend
+### ⚙️ Back-end
 - Node.js  
 - Express  
 - TypeScript  
@@ -48,7 +48,7 @@ Sistema fullstack de autenticação e gerenciamento de tarefas, com login, regis
 - bcrypt  
 - Zod  
 
-### 🎨 Frontend
+### 🎨 Front-end
 - React  
 - TypeScript  
 - Vite  
@@ -79,7 +79,7 @@ auth-system-api/
 git clone https://github.com/BrunoDiPalma/auth-system-api
 ```
 
-### 2. Backend
+### 2. Back-end
 ```bash
 cd backend
 npm install
@@ -87,7 +87,7 @@ npx prisma migrate dev
 npm run dev
 ```
 
-### 3. Frontend
+### 3. Front-end
 ```bash
 cd frontend
 npm install
@@ -98,13 +98,13 @@ npm run dev
 
 ## 🔐 Variáveis de ambiente
 
-### Backend (.env)
+### Back-end (.env)
 ```
 DATABASE_URL="file:./dev.db"
 JWT_SECRET="sua_chave_secreta"
 ```
 
-### Frontend (.env)
+### Front-end (.env)
 ```
 VITE_API_URL=https://auth-system-api-l3wc.onrender.com
 ```
